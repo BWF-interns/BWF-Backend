@@ -162,84 +162,57 @@ Middleware Functions:
 - `verifyToken()`
 - `checkRole(["admin"])`
 
-# Running the Backend with Docker
+# Running the Backend
 
-## Prerequisites
-
-Install:
-
-- Docker
-- Docker Compose
-
-Verify installation:
+## 1. Clone the Repository
 
 ```bash
-docker --version
-docker compose version
+git clone https://github.com/BWF-interns/BWF-Backend.git
+cd BWF-Backend
 ```
 
-# Start the Project
-
-From the project root directory run:
+## 2. Install Dependencies
 
 ```bash
-docker compose up --build
+npm install
 ```
 
-This will start:
+## 3. Create Environment Variables
 
-- **Backend API (Node.js)**
-- **MongoDB database**
-
-# Run in Background (Optional)
+Create a `.env` file in the root directory:
 
 ```bash
-docker compose up -d
+touch .env
 ```
 
-# Access Services
+Add the following:
 
-Backend API:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_atlas_connection_string
+ACCESS_TOKEN_SECRET=your_access_token_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+```
+
+## 4. Run the Server
+
+### Development
+
+```bash
+npm run dev
+```
+
+### Production
+
+```bash
+npm start
+```
+
+## 5. API Base URL
 
 ```
 http://localhost:5000
 ```
-
-MongoDB:
-
-```
-mongodb://localhost:27017
-```
-
-The backend connects to MongoDB internally using:
-
-```
-mongodb://mongo:27017/mydb
-```
-
-# Useful Commands
-
-Stop containers:
-
-```bash
-docker compose down
-```
-
-View logs:
-
-```bash
-docker compose logs -f backend
-```
-
-# Database Persistence
-
-MongoDB data is stored using a Docker volume:
-
-```
-mongo-data
-```
-
-This ensures database data is preserved even if containers stop.
 
 ### Example Routes
 
@@ -252,12 +225,14 @@ This ensures database data is preserved even if containers stop.
 # Suggested Folder Structure
 
 ```
- ├── controllers/
- ├── routes/
+ ├── admin/
+ ├── auth
+ │   ├── controller.js
+ │   ├── middleware.js
+ │   ├── route.js
+ │   └── service.js
  ├── models/
- ├── middleware/
- │     ├── verifyToken.js
- │     └── checkRole.js
+ │     └── User.js
  ├── services/
  ├── utils/
  └── config/
