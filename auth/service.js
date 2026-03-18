@@ -1,0 +1,35 @@
+const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
+
+function isValidUser (id) {
+    const pattern = /^BWF-\d{4}-\d+$/;
+    return pattern.test(id);
+}
+
+function generateAccessToken(user) {
+    return jwt.sign(
+        { sub: user._id, email: user.auth_id },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: "15m",
+            jwtid: uuidv4()
+        }
+    );
+}
+
+function generateRefreshToken(user) {
+    return jwt.sign(
+        { sub: user._id, email: user.auth_id },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: "7d",
+            jwtid: uuidv4()
+        }
+    );
+}
+
+module.exports = {
+    isValidUser,
+    generateAccessToken,
+    generateRefreshToken
+}
