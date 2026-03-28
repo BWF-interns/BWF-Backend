@@ -41,7 +41,7 @@ async function login(req, res) {
             user = await User.findOne({ auth_id: id });
         } else {
             if (!isValidUser(id)) {
-                return res.status(400).json({ message: 'Invalid ID format' });
+                return res.status(400).json({ message: 'Invalid ID' });
             }
             user = await User.findOne({ auth_id: id });
         }

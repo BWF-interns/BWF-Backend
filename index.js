@@ -23,7 +23,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Auth Routes
 app.use('/api', authRoutes);
+// Student Routes
+app.use('/api/students', require('./student/routes'));
 
 // First route
 app.get('/', (req, res) => {

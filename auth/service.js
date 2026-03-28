@@ -8,7 +8,11 @@ function isValidUser (id) {
 
 function generateAccessToken(user) {
     return jwt.sign(
-        { sub: user._id, email: user.auth_id },
+        {
+            sub: user._id,
+            role: user.role,
+            auth_id: user.auth_id
+        },
         process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn: "15m",
@@ -19,7 +23,11 @@ function generateAccessToken(user) {
 
 function generateRefreshToken(user) {
     return jwt.sign(
-        { sub: user._id, email: user.auth_id },
+        {
+            sub: user._id,
+            role: user.role,
+            auth_id: user.auth_id
+        },
         process.env.REFRESH_TOKEN_SECRET,
         {
             expiresIn: "7d",
