@@ -34,7 +34,7 @@ app.use('/api/students', studentRoutes);
 // app.use('/api/dashboard', dashboardRoutes);
 // app.use('/api/courses', coursesRoutes);
 // app.use('/api/noticeboard', noticeboardRoutes);
-app.use("/api/students/wellbeing", wellbeingRoutes);
+app.use("/api/student/wellbeing", wellbeingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
