@@ -10,7 +10,7 @@ const {
   authenticateToken,
   authorizeRoles,
   authorizeSelfOrAdmin
-} = require("../auth/middleware");
+} = require("../../auth/middleware");
 
 router.get(
   "/:auth_id",

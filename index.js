@@ -2,38 +2,40 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const app = express();
-const cookieParser = require("cookie-parser");
-const PORT = process.env.PORT || 5000;
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const PORT = process.env.PORT || 5000;
 
-const authRoutes = require('./auth/route');
 const connectDB = require('./utils/configure');
+const authRoutes = require('./auth/route');
+const studentRoutes = require('./student/profile/routes');
+const dashboardRoutes = require('./dashboard/routes');
+const coursesRoutes = require('./courses/routes');
+const noticeboardRoutes = require('./noticeboard/routes');
 
-// CORS configuration
+// CORS
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true
 }));
 
-// Connect DB
+// DB
 connectDB();
 
-// MIDDLEWARES
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Auth Routes
+// Routes
 app.use('/api', authRoutes);
-// Student Routes
-app.use('/api/students', require('./student/routes'));
+app.use('/api/students', studentRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/courses', coursesRoutes);
+app.use('/api/noticeboard', noticeboardRoutes);
 
-// First route
-app.get('/', (req, res) => {
-  res.send('Server started...');
-});
+app.get('/', (req, res) => res.send('BWF Server running...'));
 
-// App listening
 app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
