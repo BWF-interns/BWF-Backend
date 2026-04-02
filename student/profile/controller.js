@@ -1,4 +1,4 @@
-const Student = require("../models/Student");
+const Student = require("../models/student");
 const { isValidUser } = require("../../auth/service");
 
 const { validateStudentUpdate } = require("./service");

@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 const connectDB = require('./utils/configure');
 const authRoutes = require('./auth/route');
 const studentRoutes = require('./student/profile/routes');
-const dashboardRoutes = require('./dashboard/routes');
+const dashboardRoutes = require('./student/dashboard/routes');
 const coursesRoutes = require('./courses/routes');
 const noticeboardRoutes = require('./noticeboard/routes');
 
