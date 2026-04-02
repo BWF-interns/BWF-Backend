@@ -28,6 +28,11 @@ const moodLogSchema = new mongoose.Schema({
     default: Date.now
   },
 
+  note: {
+    type: String,
+    default: ""
+  },
+
   is_synced: {
     type: Boolean,
     default: true
