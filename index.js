@@ -9,9 +9,10 @@ const PORT = process.env.PORT || 5000;
 const connectDB = require('./utils/configure');
 const authRoutes = require('./auth/route');
 const studentRoutes = require('./student/profile/routes');
-const dashboardRoutes = require('./dashboard/routes');
-const coursesRoutes = require('./courses/routes');
-const noticeboardRoutes = require('./noticeboard/routes');
+// const dashboardRoutes = require('./dashboard/routes');
+// const coursesRoutes = require('./courses/routes');
+// const noticeboardRoutes = require('./noticeboard/routes');
+const wellbeingRoutes = require("./student/wellbeing/routes");
 
 // CORS
 app.use(cors({
@@ -30,11 +31,10 @@ app.use(cookieParser());
 // Routes
 app.use('/api', authRoutes);
 app.use('/api/students', studentRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/courses', coursesRoutes);
-app.use('/api/noticeboard', noticeboardRoutes);
-
-app.get('/', (req, res) => res.send('BWF Server running...'));
+// app.use('/api/dashboard', dashboardRoutes);
+// app.use('/api/courses', coursesRoutes);
+// app.use('/api/noticeboard', noticeboardRoutes);
+app.use("/api/student/wellbeing", wellbeingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

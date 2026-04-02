@@ -26,6 +26,7 @@ const { isValidUser } = require('./service')
 const User = require('../models/User');
 const bcrypt = require("bcrypt");
 const { generateAccessToken, generateRefreshToken } = require('./service');
+const jwt = require("jsonwebtoken");
 
 async function login(req, res) {
     try {
@@ -73,9 +74,9 @@ async function login(req, res) {
             });
         } else {
             res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
+            httpOnly: false,
             secure: true,
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
