@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const { authenticateToken, authorizeRoles } = require('../auth/middleware');
-const { createStudent } = require('./controller');
+
+const { createStudent , getWardenProfile } = require('./controller');
 
 // Warden creates student
 router.post(
@@ -12,4 +13,11 @@ router.post(
   createStudent
 );
 
+
+router.get(
+  '/profile',
+  authenticateToken,
+  authorizeRoles('warden'),
+  getWardenProfile
+);
 module.exports = router;

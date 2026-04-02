@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Warden = require('./models/warden');
 const bcrypt = require('bcrypt');
 
 async function createStudent(req, res) {
@@ -39,6 +40,26 @@ async function createStudent(req, res) {
   }
 }
 
+
+
+async function getWardenProfile(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const warden = await Warden.findOne({ userId });
+
+    if (!warden) {
+      return res.status(404).json({ message: "Warden not found" });
+    }
+
+    return res.status(200).json(warden);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
 module.exports = {
-  createStudent
+  createStudent,
+  getWardenProfile
 };
