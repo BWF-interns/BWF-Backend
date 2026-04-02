@@ -28,7 +28,6 @@ function authenticateToken(req, res, next) {
         return res.status(401).json({ message: "Invalid or expired token" });
     }
 }
-
 function authorizeRoles(...allowedRoles) {
     return (req, res, next) => {
         if (!req.user || !req.user.role) {
