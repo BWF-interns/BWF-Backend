@@ -19,6 +19,7 @@ const studentSchema = new mongoose.Schema({
     required: true
   },
 
+
   DOB: {
     type: Date,
     required: true
@@ -26,12 +27,13 @@ const studentSchema = new mongoose.Schema({
 
   gender: {
     type: String,
-    enum: ['male', 'female', 'other']
+    enum: ['male', 'female', 'other'],
+    required: true
   },
 
   email: {
     type: String,
-    required: true
+    required: false
   },
 
   contactNumber: {
@@ -40,7 +42,8 @@ const studentSchema = new mongoose.Schema({
   },
 
   address: {
-    type: String
+    type: String,
+    required: false
   },
 
   class: {
@@ -49,7 +52,18 @@ const studentSchema = new mongoose.Schema({
   },
 
   schoolName: {
-    type: String
+    type: String,
+    required: false
+  },
+
+  adhaarCard: {
+    type: String,
+    required: false
+  },
+
+  panCard: {
+    type: String,
+    required: false
   },
 
   interests: {
@@ -59,7 +73,7 @@ const studentSchema = new mongoose.Schema({
 
   profilePictureUrl: {
     type: String,
-    required: true
+    required: false
   },
 
   avatarId: {
@@ -68,9 +82,9 @@ const studentSchema = new mongoose.Schema({
   },
 
   trustedPerson: {
-    name: String,
-    phone: String,
-    relation: String
+    name: { type: String, required: false },
+    phone: { type: String, required: false },
+    relation: { type: String, required: false }
   }
 
 }, { timestamps: true });

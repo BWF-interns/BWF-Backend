@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 const connectDB = require('./utils/configure');
 const authRoutes = require('./auth/route');
 const studentRoutes = require('./student/profile/routes');
-const complaintRoutes = require("./student/complaints/routes");
+// const complaintRoutes = require("./student/complaints/routes");
 
 // const dashboardRoutes = require('./dashboard/routes');
 // const coursesRoutes = require('./courses/routes');
@@ -46,7 +46,7 @@ app.use('/api/warden', require('./warden/routes'));
 // app.use('/api/noticeboard', noticeboardRoutes);
 app.use("/api/student/wellbeing", wellbeingRoutes);
 
-app.use("/student/complaints", complaintRoutes);
+// app.use("/student/complaints", complaintRoutes);
 
 app.get('/', (req, res) => res.send('BWF Server running...'));
 
