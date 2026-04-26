@@ -32,6 +32,19 @@ const noticeSchema = new mongoose.Schema({
     required: true
   },
 
+  // Optional deadline for notices (e.g. "Submit by 20 Mar")
+  deadline: {
+    type: Date,
+    required: false
+  },
+
+  // Role of the person who created the notice
+  authorRole: {
+    type: String,
+    enum: ['admin', 'warden', 'teacher'],
+    default: 'admin'
+  },
+
   isActive: {
     type: Boolean,
     default: true,
