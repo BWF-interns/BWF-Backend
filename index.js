@@ -8,13 +8,17 @@ const PORT = process.env.PORT || 5000;
 
 const connectDB = require('./utils/configure');
 const authRoutes = require('./auth/route');
+
+//---------STUDENT ROUTES-------------
 const studentRoutes = require('./student/profile/routes');
 // const complaintRoutes = require("./student/complaints/routes");
 
-// const dashboardRoutes = require('./dashboard/routes');
 // const coursesRoutes = require('./courses/routes');
-// const noticeboardRoutes = require('./noticeboard/routes');
 const wellbeingRoutes = require("./student/wellbeing/routes");
+const dashboardStudentRoutes = require('./student/dashboard/routes');
+const noticeboardStudentRoutes = require('./student/noticeboard/routes');
+const sosRoutes = require('./student/sos/routes');
+// --------------------------
 
 // CORS
 app.use(cors({
@@ -45,6 +49,12 @@ app.use('/api/warden', require('./warden/routes'));
 // app.use('/api/courses', coursesRoutes);
 // app.use('/api/noticeboard', noticeboardRoutes);
 app.use("/api/student/wellbeing", wellbeingRoutes);
+
+// --- Additions ---
+app.use('/api/student/dashboard', dashboardStudentRoutes);
+app.use('/api/student/noticeboard', noticeboardStudentRoutes);
+app.use('/api/student/sos', sosRoutes);
+// --------------------------
 
 // app.use("/student/complaints", complaintRoutes);
 
