@@ -1,10 +1,12 @@
+// student/profile/controller.js
 const Student = require("../models/student");
 const { isValidUser } = require("../../auth/service");
+const { saveJournal, getJournal } = require("./service");
 
 const { validateStudentUpdate } = require("./service");
 
 async function getStudent(req, res) {
-  const { auth_id } = req.params;
+  const auth_id = req.user.auth_id;
 
   try {
     if (!isValidUser(auth_id)) {
@@ -18,16 +20,13 @@ async function getStudent(req, res) {
     }
 
     return res.status(200).json({
-      name: student.name,
-      DOB: student.DOB,
-      email: student.email,
-      contactNumber: student.contactNumber,
-      address: student.address,
-      class: student.class,
-      interests: student.interests,
-      avatarId: student.avatarId,
-      profilePictureUrl: student.profilePictureUrl,
-      trustedPerson: student.trustedPerson
+      name: student.name || "",
+      dob: student.DOB || null,
+      classInfo: student.classInfo || "",
+      interests: student.interests || [],
+      bio: student.bio || "",
+      avatarId: student.avatarId || null,
+      customAvatarUrl: student.customAvatarUrl || null,
     });
 
   } catch (error) {
@@ -38,7 +37,7 @@ async function getStudent(req, res) {
 
 
 async function updateStudent(req, res) {
-  const { auth_id } = req.params;
+  const auth_id = req.user.auth_id;
   let updateData = req.body;
 
   try {
@@ -52,14 +51,11 @@ async function updateStudent(req, res) {
     }
 
     const allowedFields = [
-      "name",
-      "contactNumber",
-      "email",
-      "address",
-      "class",
+      "bio",
+      "classInfo",
       "interests",
       "avatarId",
-      "trustedPerson"
+      "customAvatarUrl",
     ];
 
     updateData = Object.fromEntries(
@@ -98,16 +94,14 @@ async function updateStudent(req, res) {
     }
 
     return res.status(200).json({
-      name: student.name,
-      DOB: student.DOB,
-      email: student.email,
-      contactNumber: student.contactNumber,
-      address: student.address,
-      class: student.class,
-      interests: student.interests,
-      avatarId: student.avatarId,
-      profilePictureUrl: student.profilePictureUrl,
-      trustedPerson: student.trustedPerson
+      name: student.name || "",
+      dob: student.DOB || null,
+      bio: student.bio || "",
+      classInfo: student.classInfo || "",
+      interests: student.interests || [],
+      avatarId: student.avatarId || null,
+      customAvatarUrl: student.customAvatarUrl || null,
+      // trustedPerson: student.trustedPerson
     });
 
   } catch (error) {
@@ -116,7 +110,46 @@ async function updateStudent(req, res) {
   }
 }
 
+async function postJournal(req, res) {
+  try {
+    const auth_id = req.user.auth_id;
+
+    const { title, body, date } = req.body;
+
+    if (!title || !body || !date) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const entry = await saveJournal(auth_id, { title, body, date });
+
+    return res.status(200).json({
+      success: true,
+      entry
+    });
+
+  } catch (err) {
+    console.error("JOURNAL SAVE ERROR:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+async function getJournalEntries(req, res) {
+  try {
+    const auth_id = req.user.auth_id;
+
+    const entries = await getJournal(auth_id);
+
+    return res.status(200).json(entries);
+
+  } catch (err) {
+    console.error("JOURNAL FETCH ERROR:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
 module.exports = {
   getStudent,
-  updateStudent
+  updateStudent,
+  postJournal,
+  getJournalEntries
 };

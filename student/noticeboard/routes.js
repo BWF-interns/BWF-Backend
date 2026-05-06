@@ -1,3 +1,4 @@
+// student/noticeboard/routes.js
 const express = require('express');
 const router = express.Router();
 const {
@@ -7,48 +8,43 @@ const {
   dismissNotice,
   getUnreadBadge
 } = require('./controller');
-const { authenticateToken, authorizeRoles, authorizeSelfOrAdmin } = require("../../auth/middleware");
+const { authenticateToken, authorizeRoles } = require("../../auth/middleware");
 
 // All routes require auth. Students only see their own notice state.
 
 router.get(
-  '/:auth_id',
+  '/me',
   authenticateToken,
   authorizeRoles('student', 'admin'),
-  authorizeSelfOrAdmin,
   getNotices
 );
 
 router.get(
-  '/:auth_id/unread-count',
+  '/me/unread-count',
   authenticateToken,
   authorizeRoles('student', 'admin'),
-  authorizeSelfOrAdmin,
   getUnreadBadge
 );
 
 router.post(
-  '/:auth_id/notices/:noticeId/read',
+  '/me/notices/:noticeId/read',
   authenticateToken,
   authorizeRoles('student'),
-  authorizeSelfOrAdmin,
   markRead
 );
 
 router.post(
-  '/:auth_id/read-all',
+  '/me/read-all',
   authenticateToken,
   authorizeRoles('student'),
-  authorizeSelfOrAdmin,
   markAllRead
 );
 
 // DELETE maps to the X button — dismisses a notice from the student's view
 router.delete(
-  '/:auth_id/notices/:noticeId',
+  '/me/notices/:noticeId',
   authenticateToken,
   authorizeRoles('student'),
-  authorizeSelfOrAdmin,
   dismissNotice
 );
 

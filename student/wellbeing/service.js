@@ -13,63 +13,54 @@ const reverseMoodMap = {
   "need_help": "Need Help"
 };
 
-async function saveMood(auth_id, mood, note) {
-  const mappedMood = moodMap[mood];
+function getTodayDate() {
+  return new Date().toISOString().split("T")[0];
+}
 
-  if (!mappedMood) {
-    throw new Error("Invalid mood");
-  }
+async function saveMood({ auth_id, mood, context, thought, reframe }) {
+  const date = getTodayDate();
 
-  const today = new Date().toISOString().split("T")[0];
+  const formattedMood = mood.toLowerCase().replace(" ", "_");
 
-  const updated = await MoodLog.findOneAndUpdate(
-    { auth_id, date: today },
+  return await MoodLog.findOneAndUpdate(
+    { auth_id, date },
     {
-      mood: mappedMood,
-      note,
+      mood: formattedMood,
+      context,
+      thought,
+      reframe,
       last_modified: new Date()
     },
-    { upsert: true, new: true }
+    {
+      new: true,
+      upsert: true
+    }
   );
-
-  return updated;
 }
 
 async function getMoodHistory(auth_id) {
-  const logs = await MoodLog.find({ auth_id })
+  const data = await MoodLog.find({ auth_id })
     .sort({ date: -1 })
-    .limit(30)
     .lean();
 
-  return logs.map(log => ({
-    id: log._id,
-    date: log.date,
-    mood: reverseMoodMap[log.mood],
-    note: log.note || ""
+  return data.map(item => ({
+    id: item._id,
+    date: item.date,
+    mood: formatMood(item.mood),
+    context: item.context,
+    thought: item.thought,
+    reframe: item.reframe
   }));
 }
 
-async function saveJournal(auth_id, text) {
-  const entry = await Journal.create({
-    auth_id,
-    text
-  });
-
-  return entry;
+function formatMood(mood) {
+  if (mood === "need_help") return "Need Help";
+  return mood.charAt(0).toUpperCase() + mood.slice(1);
 }
 
-async function getJournal(auth_id) {
-  const entries = await Journal.find({ auth_id })
-    .sort({ createdAt: -1 })
-    .limit(20)
-    .lean();
 
-  return entries;
-}
 
 module.exports = {
   saveMood,
   getMoodHistory,
-  saveJournal,
-  getJournal
 };

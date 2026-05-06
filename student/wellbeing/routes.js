@@ -1,3 +1,4 @@
+// student/wellbeing/routes.js
 const express = require("express");
 const {authenticateToken} = require("../../auth/middleware")
 const router = express.Router();
@@ -5,13 +6,28 @@ const router = express.Router();
 const {
   postMood,
   getMood,
-  postJournal,
-  getJournalEntries
+  getHistory,
+  requestCounselling,
+  toggleTask,
+  getTodayTask
 } = require("./controller");
 
-router.post("/mood", authenticateToken, postMood);
+// 
 router.get("/mood", authenticateToken, getMood);
 
-router.post("/journal", authenticateToken, postJournal);
-router.get("/journal", authenticateToken, getJournalEntries);
+// CBT Mood Log
+router.post("/mood", authenticateToken, postMood);
+
+// Mood History
+router.get("/history", authenticateToken, getHistory);
+
+// Counselling Request
+router.post("/counselling", authenticateToken, requestCounselling);
+
+// Daily Task Toggle
+router.patch("/tasks/today", authenticateToken, toggleTask);
+
+router.get("/tasks/today", authenticateToken, getTodayTask);
+
+
 module.exports = router;

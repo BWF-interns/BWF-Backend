@@ -1,3 +1,4 @@
+// student/models/assignment.js
 const mongoose = require('mongoose');
 
 // Assignments are created by wardens/teachers and assigned to students.

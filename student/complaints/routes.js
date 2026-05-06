@@ -1,29 +1,30 @@
-// const express = require("express");
-// const router = express.Router();
+// student/complaints/routes.js
+const express = require("express");
+const router = express.Router();
 
-// const {
-//   postComplaint,
-//   getMyComplaints
-// } = require("./controller");
+const {
+  postComplaint,
+  getMyComplaints
+} = require("./controller");
 
-// const {
-//   authenticateToken,
-//   authorizeRoles
-// } = require("../../auth/middleware");
+const {
+  authenticateToken,
+  authorizeRoles
+} = require("../../auth/middleware");
 
-// // Student only
-// router.post(
-//   "/",
-//   authenticateToken,
-//   authorizeRoles("student"),
-//   postComplaint
-// );
+// Student only
+router.post(
+  "/",
+  authenticateToken,
+  authorizeRoles("student"),
+  postComplaint
+);
 
-// router.get(
-//   "/",
-//   authenticateToken,
-//   authorizeRoles("student"),
-//   getMyComplaints
-// );
+router.get(
+  "/",
+  authenticateToken,
+  authorizeRoles("student"),
+  getMyComplaints
+);
 
-// module.exports = router;
+module.exports = router;
