@@ -70,8 +70,9 @@ async function login(req, res) {
         if (isMobile) {
             return res.status(200).json({
                 role: user.role,
-                accessToken,
-                refreshToken
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                auth_id: user.auth_id 
             });
         } else {
             res.cookie("refreshToken", refreshToken, {
@@ -83,7 +84,8 @@ async function login(req, res) {
 
         return res.status(200).json({
             role: user.role,
-            accessToken
+            accessToken:accessToken,
+            auth_id: user.auth_id
         });
 }
 

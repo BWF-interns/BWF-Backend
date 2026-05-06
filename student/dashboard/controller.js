@@ -13,7 +13,7 @@ const {
 // Rationale: under limited connectivity, one round trip beats five.
 // All sub-queries run in parallel via Promise.all.
 async function getDashboard(req, res) {
-  const { auth_id } = req.params;
+    const auth_id = req.user.auth_id;
 
   try {
     const today = getTodayString();
@@ -45,7 +45,7 @@ async function getDashboard(req, res) {
 // Student taps Happy / Okay / Need Help.
 // Upserts so tapping again today updates instead of duplicating.
 async function logMood(req, res) {
-  const { auth_id } = req.params;
+  const auth_id = req.user.auth_id;
   const { mood } = req.body;
 
   const validMoods = ['happy', 'okay', 'need_help'];
@@ -73,7 +73,8 @@ async function logMood(req, res) {
 // POST /api/dashboard/:auth_id/mentor-note/:noteId/thanks
 // Student taps "Say thanks" on the mentor note card.
 async function thankMentor(req, res) {
-  const { auth_id, noteId } = req.params;
+  const { noteId } = req.params;
+  const auth_id = req.user.auth_id;
 
   try {
     const note = await MentorNote.findOne({ _id: noteId, auth_id });

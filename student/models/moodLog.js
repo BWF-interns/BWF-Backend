@@ -1,3 +1,4 @@
+// student/models/moodLog.js
 const mongoose = require('mongoose');
 
 // Each time a student taps Happy / Okay / Need Help on the dashboard, a log entry is created.
@@ -28,7 +29,7 @@ const moodLogSchema = new mongoose.Schema({
     default: Date.now
   },
 
-  note: {
+  context: {
     type: String,
     default: ""
   },
@@ -36,6 +37,16 @@ const moodLogSchema = new mongoose.Schema({
   is_synced: {
     type: Boolean,
     default: true
+  },
+
+  thought: {
+    type: String,
+    default: ""
+  },
+
+  reframe: {
+    type: String,
+    default: ""
   }
 
 }, { timestamps: true });

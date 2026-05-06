@@ -2,7 +2,8 @@ const NoticeInteraction = require('../models/NoticeInteraction');
 const { getNoticesForStudent, getUnreadCount, markAllNoticesRead } = require('./service');
 
 async function getNotices(req, res) {
-  const { auth_id } = req.params;
+  const auth_id = req.user.auth_id;
+
   const { category = 'all', page = 1, limit = 20 } = req.query;
 
   try {
@@ -19,7 +20,8 @@ async function getNotices(req, res) {
 }
 
 async function markRead(req, res) {
-  const { auth_id, noticeId } = req.params;
+  const { noticeId } = req.params;
+  const auth_id = req.user.auth_id;
 
   try {
     await NoticeInteraction.findOneAndUpdate(
@@ -35,7 +37,7 @@ async function markRead(req, res) {
 }
 
 async function markAllRead(req, res) {
-  const { auth_id } = req.params;
+  const auth_id = req.user.auth_id;
   
   try {
     await markAllNoticesRead(auth_id);
@@ -47,7 +49,8 @@ async function markAllRead(req, res) {
 }
 
 async function dismissNotice(req, res) {
-  const { auth_id, noticeId } = req.params;
+  const { noticeId } = req.params;
+  const auth_id = req.user.auth_id;
 
   try {
     await NoticeInteraction.findOneAndUpdate(
@@ -63,7 +66,7 @@ async function dismissNotice(req, res) {
 }
 
 async function getUnreadBadge(req, res) {
-  const { auth_id } = req.params;
+  const auth_id = req.user.auth_id;
   try {
     const count = await getUnreadCount(auth_id);
     return res.status(200).json({ unreadCount: count });
