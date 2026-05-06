@@ -7,9 +7,20 @@ const journalSchema = new mongoose.Schema({
     index: true
   },
 
-  text: {
+  title: {
     type: String,
     required: true
+  },
+
+  body: {
+    type: String,
+    required: true
+  },
+
+  date: {
+    type: String, // YYYY-MM-DD
+    required: true,
+    index: true
   }
 
 }, { timestamps: true });

@@ -9,6 +9,9 @@ const complaintSchema = new mongoose.Schema(
 
     message: {
       type: String,
+      trim: true,
+      minlength: 10,
+      maxLength: 1000,
       required: true
     },
 
@@ -19,7 +22,7 @@ const complaintSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["safety", "infrastructure", "food", "other"],
+      enum: ["Hostel & Facilities", "Academic Pressure", "Peer Conflict", "Safety/Personal", "Other"],
       default: "other"
     },
 
@@ -31,9 +34,15 @@ const complaintSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["OPEN", "RESOLVED", "ESCALATED"],
-      default: "OPEN"
-    }
+      enum: ["open", "resolved", "escalated"],
+      default: "open"
+    },
+
+    type: {
+      type: String,
+      enum: ["complaint", "activity"],
+      default: "complaint"
+    },
   },
   { timestamps: true }
 );

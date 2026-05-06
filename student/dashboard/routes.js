@@ -1,3 +1,4 @@
+// student/dashboard/routes.js
 const express = require('express');
 const router = express.Router();
 const { getDashboard, logMood, thankMentor } = require('./controller');
@@ -7,7 +8,7 @@ const { authenticateToken, authorizeRoles, authorizeSelfOrAdmin } = require('../
 // authorizeSelfOrAdmin ensures a student can only see their own dashboard.
 
 router.get(
-  '/:auth_id',
+  '/me',
   authenticateToken,
   authorizeRoles('student', 'admin'),
   authorizeSelfOrAdmin,
@@ -15,7 +16,7 @@ router.get(
 );
 
 router.post(
-  '/:auth_id/mood',
+  '/me/mood',
   authenticateToken,
   authorizeRoles('student'),
   authorizeSelfOrAdmin,
@@ -23,7 +24,7 @@ router.post(
 );
 
 router.post(
-  '/:auth_id/mentor-note/:noteId/thanks',
+  '/me/mentor-note/:noteId/thanks',
   authenticateToken,
   authorizeRoles('student'),
   authorizeSelfOrAdmin,

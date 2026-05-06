@@ -1,31 +1,45 @@
+// student/profile/routes.js
 const express = require("express");
 const router = express.Router();
 
 const {
   getStudent,
-  updateStudent
+  updateStudent,
+  getJournalEntries,
+  postJournal
 } = require("./controller");
 
 const {
   authenticateToken,
   authorizeRoles,
-  authorizeSelfOrAdmin
 } = require("../../auth/middleware");
 
 router.get(
-  "/:auth_id",
+  "/me",
   authenticateToken,
   authorizeRoles("student", "admin"),
-  authorizeSelfOrAdmin,
   getStudent
 );
 
 router.put(
-  "/:auth_id",
+  "/me",
   authenticateToken,
   authorizeRoles("student"),
-  authorizeSelfOrAdmin,
   updateStudent
+);
+
+router.get(
+  "/me/journal",
+  authenticateToken,
+  authorizeRoles("student"),
+  getJournalEntries
+);
+
+router.post(
+  "/me/journal",
+  authenticateToken,
+  authorizeRoles("student"),
+  postJournal
 );
 
 module.exports = router;
