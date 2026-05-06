@@ -35,7 +35,7 @@ async function createHostel({
 async function createWarden({
   hostelId,
   name = "Warden User",
-  auth_id = "warden@bwf.com",
+  auth_id = "warden1@bwf.com",
   password = "123456",
   phone = "9876543210",
   gender = "male",

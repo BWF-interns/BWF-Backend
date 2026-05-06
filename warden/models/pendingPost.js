@@ -11,7 +11,7 @@ const pollOptionSchema = new mongoose.Schema({
   },
 });
 
-const postSchema = new mongoose.Schema(
+const pendingPostSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
@@ -31,7 +31,7 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     time: {
-      type: String, // Format: HH:mm
+      type: String,
       required: true,
     },
     status: {
@@ -48,17 +48,6 @@ const postSchema = new mongoose.Schema(
       type: String,
     }],
     pollOptions: [pollOptionSchema],
-    voters: [{
-      userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users',
-        required: true,
-      },
-      optionIndex: {
-        type: Number,
-        required: true,
-      },
-    }],
     rejectionReason: {
       type: String,
     },
@@ -85,18 +74,13 @@ const postSchema = new mongoose.Schema(
     creatorRole: {
       type: String,
       required: true,
-      // Supporting all possible creators
     },
     hostelName: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Hostel',
     },
-    pinned: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Post", postSchema);
+module.exports = mongoose.model("PendingPost", pendingPostSchema);

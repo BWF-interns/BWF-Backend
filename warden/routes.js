@@ -14,8 +14,24 @@ const {
   updateStaff,
   updateStaffCredentials,
   deleteStaff,
+  getPosts,
+  createPost,
+  updatePost,
+  updatePostPin,
+  deletePost,
+  votePost,
   getWardenProfile,
-  updateWardenProfile
+  updateWardenProfile,
+  getComplaints,
+  approveComplaint,
+  rejectComplaint,
+  deleteComplaint,
+  testCreateComplaint,
+  getActivities,
+  approveActivity,
+  rejectActivity,
+  deleteActivity,
+  testCreateActivity,
 } = require('./controller');
 
 // ===== WARDEN PROFILE =====
@@ -116,5 +132,141 @@ router.delete(
   authorizeRoles('warden'),
   deleteStaff
 );
+
+// ===== COMMUNITY POSTS =====
+
+// GET ALL / PINNED
+router.get(
+  '/posts',
+  authenticateToken,
+  authorizeRoles('warden'),
+  getPosts
+);
+
+// CREATE
+router.post(
+  '/posts',
+  authenticateToken,
+  authorizeRoles('warden'),
+  createPost
+);
+
+// UPDATE OWN
+router.put(
+  '/posts/:postId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  updatePost
+);
+
+// PIN / UNPIN OWN
+router.put(
+  '/posts/:postId/pin',
+  authenticateToken,
+  authorizeRoles('warden'),
+  updatePostPin
+);
+
+// DELETE OWN
+router.delete(
+  '/posts/:postId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  deletePost
+);
+
+// VOTE ON POLL
+router.post(
+  '/posts/:postId/vote',
+  authenticateToken,
+  authorizeRoles('warden'),
+  votePost
+);
+
+// ===== COMPLAINTS =====
+// GET COMPLAINTS
+router.get(
+  '/complaints',
+  authenticateToken,
+  authorizeRoles('warden'),
+  getComplaints
+);
+
+// APPROVE COMPLAINT
+router.put(
+  '/complaints/:complaintId/approve',
+  authenticateToken,
+  authorizeRoles('warden'),
+  approveComplaint
+);
+
+// REJECT COMPLAINT
+router.put(
+  '/complaints/:complaintId/reject',
+  authenticateToken,
+  authorizeRoles('warden'),
+  rejectComplaint
+);
+
+// DELETE CLOSED COMPLAINT
+router.delete(
+  '/complaints/:complaintId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  deleteComplaint
+);
+
+// TEST CREATE COMPLAINT
+router.post(
+  '/complaints/test/:studentId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  testCreateComplaint
+);
+
+// ===== ACTIVITIES =====
+// GET ALL
+router.get(
+  '/activities',
+  authenticateToken,
+  authorizeRoles('warden'),
+  getActivities
+);
+
+// APPROVE
+router.put(
+  '/activities/:activityId/approve',
+  authenticateToken,
+  authorizeRoles('warden'),
+  approveActivity
+);
+
+// REJECT
+router.put(
+  '/activities/:activityId/reject',
+  authenticateToken,
+  authorizeRoles('warden'),
+  rejectActivity
+);
+
+// DELETE
+router.delete(
+  '/activities/:activityId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  deleteActivity
+);
+
+// TEST CREATE ACTIVITY
+router.post(
+  '/activities/test/:requesterId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  testCreateActivity
+);
+
+// MODERATION ROUTES
+const moderationRoutes = require('./moderation/routes');
+router.use('/moderation', moderationRoutes);
 
 module.exports = router;

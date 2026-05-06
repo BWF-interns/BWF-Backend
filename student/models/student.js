@@ -38,7 +38,7 @@ const studentSchema = new mongoose.Schema({
 
   contactNumber: {
     type: String,
-    required: true
+    required: false
   },
 
   address: {
