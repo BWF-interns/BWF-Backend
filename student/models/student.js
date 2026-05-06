@@ -57,6 +57,11 @@ const studentSchema = new mongoose.Schema({
     required: false
   },
 
+  class: {
+    type: String,
+    required: false
+  },
+
   classInfo: {
     type: String,
     enum: [
@@ -73,7 +78,7 @@ const studentSchema = new mongoose.Schema({
       '11th Grade',
       '12th Grade'
     ],
-    required: true
+    required: false
   },
 
   schoolName: {
