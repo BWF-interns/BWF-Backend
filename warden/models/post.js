@@ -65,7 +65,12 @@ const postSchema = new mongoose.Schema(
       // Supporting all possible creators
     },
     hostelName: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hostel',
+    },
+    pinned: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

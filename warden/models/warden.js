@@ -16,14 +16,59 @@ const wardenSchema = new mongoose.Schema(
 
     email: {
       type: String,
+      trim: true,
+      lowercase: true,
     },
 
     hostelName: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hostel",
+      // you can add required: true if every warden must belong to hostel
     },
 
     phone: {
       type: String,
+      trim: true,
+    },
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+
+    DOB: {
+      type: Date,
+    },
+
+    address: {
+      type: String,
+      trim: true,
+    },
+
+    qualification: {
+      type: String,
+      trim: true,
+    },
+
+    joiningDate: {
+      type: Date,
+    },
+
+    status: {
+      type: String,
+      enum: ["Active", "On Leave", "Inactive"],
+      default: "Active",
+    },
+
+    emergencyContact: {
+      name: { type: String, trim: true },
+      phone: { type: String, trim: true },
+      relation: { type: String, trim: true },
+    },
+
+    profilePic: {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true }

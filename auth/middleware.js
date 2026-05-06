@@ -34,7 +34,12 @@ function authorizeRoles(...allowedRoles) {
             return res.status(403).json({ message: "Access denied" });
         }
 
-        if (!allowedRoles.includes(req.user.role)) {
+        const userRole = String(req.user.role).trim().toLowerCase();
+        const normalizedAllowedRoles = allowedRoles.map((role) =>
+            String(role).trim().toLowerCase()
+        );
+
+        if (!normalizedAllowedRoles.includes(userRole)) {
             return res.status(403).json({ message: "Forbidden" });
         }
 
