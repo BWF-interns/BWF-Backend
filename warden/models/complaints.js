@@ -48,7 +48,7 @@ const complaintSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ['Student', 'Teacher'],
+      enum: ['student', 'staff'],
       required: true,
     },
 
@@ -85,13 +85,14 @@ const complaintSchema = new mongoose.Schema(
     },
 
     creator: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Warden',
-      required: true,
-    },
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Users',
+  required: true,
+},
 
     hostelName: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hostel',
       required: true,
     },
   },

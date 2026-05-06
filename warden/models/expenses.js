@@ -54,7 +54,8 @@ const expenseSchema = new mongoose.Schema(
         },
 
         hostelName: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Hostel',
             required: true,
         },
     },

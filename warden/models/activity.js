@@ -43,10 +43,6 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
 
-    participants: {
-      type: Number,
-      default: 0,
-    },
 
     category: {
       type: String,
@@ -63,15 +59,24 @@ const activitySchema = new mongoose.Schema(
     rejectionReason: {
       type: String,
     },
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Users',
+    },
+    rejectedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Users',
+    },
 
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Warden',
+      ref: 'Users',
       required: true,
     },
 
     hostelName: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hostel',
       required: true,
     },
   },

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const studentSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Users',
+    ref: 'User',
     required: true,
     unique: true
   },
@@ -51,10 +51,34 @@ const studentSchema = new mongoose.Schema({
     required: false
   },
 
+  hostelName: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hostel',
+    required: false
+  },
+
+  class: {
+    type: String,
+    required: false
+  },
+
   classInfo: {
     type: String,
-    enum: ['1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade'],
-    required: true
+    enum: [
+      '1st Grade',
+      '2nd Grade',
+      '3rd Grade',
+      '4th Grade',
+      '5th Grade',
+      '6th Grade',
+      '7th Grade',
+      '8th Grade',
+      '9th Grade',
+      '10th Grade',
+      '11th Grade',
+      '12th Grade'
+    ],
+    required: false
   },
 
   schoolName: {

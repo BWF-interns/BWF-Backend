@@ -16,12 +16,16 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'warden', 'student'],
+    enum: ['admin', 'warden', 'student', 'staff'],
     required: true
   },
   refreshToken: {
     type: String
- }
+ },
+ hostelName: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Hostel",
+}
 });
 
 const User = mongoose.model('Users', userSchema);
