@@ -5,7 +5,9 @@ const bcrypt = require('bcrypt');
 const Staff = require('./models/staff');
 const Post = require('./models/post');
 const WardenComplaint = require('./models/complaints');
+const ComplaintHistory = require('./models/complaintHistory');
 const Activity = require('./models/activity');
+const PendingActivity = require('./models/pendingActivity');
 const mongoose = require('mongoose');
 
 const postToResponse = (post, userId) => {
@@ -1207,6 +1209,24 @@ async function approveComplaint(req, res) {
       { new: true, runValidators: true }
     ).populate("hostelName").populate("creator");
 
+    // Sync to ComplaintHistory
+    if (updatedComplaint) {
+      await ComplaintHistory.create({
+        title: updatedComplaint.title,
+        description: updatedComplaint.description,
+        reporter: updatedComplaint.reporter,
+        role: updatedComplaint.role,
+        date: updatedComplaint.date,
+        time: updatedComplaint.time,
+        location: updatedComplaint.location,
+        priority: updatedComplaint.priority,
+        status: updatedComplaint.status,
+        timeline: updatedComplaint.timeline,
+        creator: updatedComplaint.creator._id || updatedComplaint.creator,
+        hostelName: updatedComplaint.hostelName._id || updatedComplaint.hostelName
+      });
+    }
+
     return res.status(200).json(updatedComplaint);
 
   } catch (err) {
@@ -1257,6 +1277,24 @@ async function rejectComplaint(req, res) {
       { new: true, runValidators: true }
     ).populate("hostelName").populate("creator");
 
+    // Sync to ComplaintHistory
+    if (updatedComplaint) {
+      await ComplaintHistory.create({
+        title: updatedComplaint.title,
+        description: updatedComplaint.description,
+        reporter: updatedComplaint.reporter,
+        role: updatedComplaint.role,
+        date: updatedComplaint.date,
+        time: updatedComplaint.time,
+        location: updatedComplaint.location,
+        priority: updatedComplaint.priority,
+        status: updatedComplaint.status,
+        timeline: updatedComplaint.timeline,
+        creator: updatedComplaint.creator._id || updatedComplaint.creator,
+        hostelName: updatedComplaint.hostelName._id || updatedComplaint.hostelName
+      });
+    }
+
     return res.status(200).json(updatedComplaint);
 
   } catch (err) {
@@ -1279,22 +1317,73 @@ async function deleteComplaint(req, res) {
       return res.status(404).json({ message: "Warden not found" });
     }
 
-    const complaint = await WardenComplaint.findOne({
+    const complaint = await WardenComplaint.findOneAndDelete({
       _id: complaintId,
-      hostelName: warden.hostelName
+      hostelName: warden.hostelName,
+      status: { $ne: 'OPEN' } // Can only delete resolved/escalated ones from active list
     });
 
     if (!complaint) {
-      return res.status(404).json({ message: "Complaint not found" });
+      return res.status(404).json({ message: "Complaint not found or is still open" });
     }
 
-    if (complaint.status === 'OPEN') {
-      return res.status(400).json({ message: "Cannot delete open complaint" });
+    return res.status(200).json({ message: "Complaint removed from active list" });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+async function getComplaintHistory(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const warden = await Warden.findOne({ userId });
+    if (!warden) {
+      return res.status(404).json({ message: "Warden not found" });
     }
 
-    await WardenComplaint.findByIdAndDelete(complaintId);
+    const history = await ComplaintHistory.find({
+      hostelName: warden.hostelName
+    })
+      .populate("hostelName")
+      .populate("creator")
+      .sort({ "timeline.reportedDate": -1, "timeline.reportedTime": -1 })
+      .select("-__v");
 
-    return res.status(200).json({ message: "Complaint deleted successfully" });
+    return res.status(200).json(history);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+async function deleteComplaintHistory(req, res) {
+  try {
+    const userId = req.user.id;
+    const { historyId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(historyId)) {
+      return res.status(400).json({ message: "Invalid history id" });
+    }
+
+    const warden = await Warden.findOne({ userId });
+    if (!warden) {
+      return res.status(404).json({ message: "Warden not found" });
+    }
+
+    const history = await ComplaintHistory.findOneAndDelete({
+      _id: historyId,
+      hostelName: warden.hostelName
+    });
+
+    if (!history) {
+      return res.status(404).json({ message: "History record not found" });
+    }
+
+    return res.status(200).json({ message: "History record deleted permanently" });
 
   } catch (err) {
     console.error(err);
@@ -1382,6 +1471,33 @@ async function getActivities(req, res) {
   }
 }
 
+async function getPendingActivities(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const warden = await Warden.findOne({ userId });
+    if (!warden) {
+      return res.status(404).json({ message: "Warden not found" });
+    }
+
+    const activities = await PendingActivity.find({
+      hostelName: warden.hostelName
+    })
+      .populate("hostelName")
+      .populate("creator")
+      .populate("approvedBy", "name")
+      .populate("rejectedBy", "name")
+      .sort({ createdAt: -1 })
+      .select("-__v");
+
+    return res.status(200).json(activities);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
 async function approveActivity(req, res) {
   try {
     const userId = req.user.id;
@@ -1396,24 +1512,49 @@ async function approveActivity(req, res) {
       return res.status(404).json({ message: "Warden not found" });
     }
 
-    const activity = await Activity.findOneAndUpdate(
+    // 1. Update the record in PendingActivity
+    const pendingActivity = await PendingActivity.findOneAndUpdate(
       {
         _id: activityId,
         hostelName: warden.hostelName
       },
-      { 
+      {
         status: 'Approved',
         approvedBy: userId,
-        rejectedBy: null 
+        rejectedBy: null
       },
       { new: true, runValidators: true }
     ).populate("hostelName").populate("creator").populate("approvedBy", "name");
 
-    if (!activity) {
-      return res.status(404).json({ message: "Activity not found" });
+    if (!pendingActivity) {
+      return res.status(404).json({ message: "Pending activity not found" });
     }
 
-    return res.status(200).json(activity);
+    // 2. Create/Sync to the live Activity collection
+    const latestActivity = await Activity.findOne().sort({ id: -1 }).select("id");
+    const newLiveId = (latestActivity?.id || 0) + 1;
+
+    const liveActivity = await Activity.create({
+      id: newLiveId,
+      title: pendingActivity.title,
+      description: pendingActivity.description,
+      requestedBy: pendingActivity.requestedBy,
+      requesterRole: pendingActivity.requesterRole,
+      date: pendingActivity.date,
+      time: pendingActivity.time,
+      location: pendingActivity.location,
+      category: pendingActivity.category,
+      status: 'Approved',
+      approvedBy: userId,
+      creator: pendingActivity.creator._id || pendingActivity.creator,
+      hostelName: pendingActivity.hostelName
+    });
+
+    return res.status(200).json({
+      message: "Activity approved and published",
+      activity: pendingActivity,
+      publishedActivity: liveActivity
+    });
 
   } catch (err) {
     console.error(err);
@@ -1436,7 +1577,7 @@ async function rejectActivity(req, res) {
       return res.status(404).json({ message: "Warden not found" });
     }
 
-    const activity = await Activity.findOneAndUpdate(
+    const activity = await PendingActivity.findOneAndUpdate(
       {
         _id: activityId,
         hostelName: warden.hostelName
@@ -1476,17 +1617,51 @@ async function deleteActivity(req, res) {
       return res.status(404).json({ message: "Warden not found" });
     }
 
-    const activity = await Activity.findOneAndDelete({
+    // Deleting from this route now targets the moderation record (PendingActivity)
+    // as per user request, to prevent deleting live activities for everyone.
+    const activity = await PendingActivity.findOneAndDelete({
       _id: activityId,
       hostelName: warden.hostelName,
-      status: { $ne: 'Pending' }
+      status: { $in: ['Approved', 'Rejected'] }
     });
 
     if (!activity) {
-      return res.status(404).json({ message: "Activity not found or is still pending" });
+      return res.status(404).json({ message: "Moderation record not found or is still pending" });
     }
 
-    return res.status(200).json({ message: "Activity deleted successfully" });
+    return res.status(200).json({ message: "Moderation record deleted successfully" });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+async function deletePendingActivity(req, res) {
+  try {
+    const userId = req.user.id;
+    const { activityId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(activityId)) {
+      return res.status(400).json({ message: "Invalid activity id" });
+    }
+
+    const warden = await Warden.findOne({ userId });
+    if (!warden) {
+      return res.status(404).json({ message: "Warden not found" });
+    }
+
+    const activity = await PendingActivity.findOneAndDelete({
+      _id: activityId,
+      hostelName: warden.hostelName,
+      status: { $in: ['Approved', 'Rejected'] } // Only allow deleting processed ones
+    });
+
+    if (!activity) {
+      return res.status(404).json({ message: "Pending activity not found or cannot be deleted" });
+    }
+
+    return res.status(200).json({ message: "Moderation record deleted" });
 
   } catch (err) {
     console.error(err);
@@ -1553,18 +1728,18 @@ async function testCreateActivity(req, res) {
     }
 
     const roleMap = {
-      student: 'Student',
-      teacher: 'Teacher',
-      warden: 'Warden'
+      student: 'student',
+      warden: 'warden',
+      staff: 'staff'
     };
 
-    const normalizedRole = roleMap[requesterRole] || 'Student';
-    const isAutoApproved = normalizedRole === 'Warden';
+    const normalizedRole = roleMap[requesterRole] || 'student';
+    const isAutoApproved = normalizedRole === 'warden';
     const status = isAutoApproved ? 'Approved' : 'Pending';
 
-    const latestActivity = await Activity.findOne().sort({ id: -1 }).select("id");
+    const latestActivity = await PendingActivity.findOne().sort({ id: -1 }).select("id");
 
-    const activity = await Activity.create({
+    const activity = await PendingActivity.create({
       id: (latestActivity?.id || 0) + 1,
       title: title || "Test Activity",
       description: description || "Test description",
@@ -1574,8 +1749,7 @@ async function testCreateActivity(req, res) {
       time: time || "10:00",
       location: location || "Hostel Ground",
       category: category || "Sports",
-      status: status,
-      approvedBy: isAutoApproved ? wardenUserId : null, // Store warden userId
+      status: 'Pending',
       creator: requesterUser._id,
       hostelName: warden.hostelName
     });
@@ -1617,13 +1791,17 @@ module.exports = {
   getWardenProfile,
   updateWardenProfile,
   getComplaints,
+  getComplaintHistory,
   approveComplaint,
   rejectComplaint,
   deleteComplaint,
+  deleteComplaintHistory,
   testCreateComplaint,
   getActivities,
+  getPendingActivities,
   approveActivity,
   rejectActivity,
   deleteActivity,
+  deletePendingActivity,
   testCreateActivity,
 };

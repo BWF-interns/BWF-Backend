@@ -23,14 +23,18 @@ const {
   getWardenProfile,
   updateWardenProfile,
   getComplaints,
+  getComplaintHistory,
   approveComplaint,
   rejectComplaint,
   deleteComplaint,
+  deleteComplaintHistory,
   testCreateComplaint,
   getActivities,
+  getPendingActivities,
   approveActivity,
   rejectActivity,
   deleteActivity,
+  deletePendingActivity,
   testCreateActivity,
 } = require('./controller');
 
@@ -224,6 +228,21 @@ router.post(
   testCreateComplaint
 );
 
+// COMPLAINT HISTORY
+router.get(
+  '/complaints/history',
+  authenticateToken,
+  authorizeRoles('warden'),
+  getComplaintHistory
+);
+
+router.delete(
+  '/complaints/history/:historyId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  deleteComplaintHistory
+);
+
 // ===== ACTIVITIES =====
 // GET ALL
 router.get(
@@ -231,6 +250,14 @@ router.get(
   authenticateToken,
   authorizeRoles('warden'),
   getActivities
+);
+
+// GET PENDING
+router.get(
+  '/activities/pending',
+  authenticateToken,
+  authorizeRoles('warden'),
+  getPendingActivities
 );
 
 // APPROVE
@@ -255,6 +282,14 @@ router.delete(
   authenticateToken,
   authorizeRoles('warden'),
   deleteActivity
+);
+
+// DELETE PENDING
+router.delete(
+  '/activities/pending/:activityId',
+  authenticateToken,
+  authorizeRoles('warden'),
+  deletePendingActivity
 );
 
 // TEST CREATE ACTIVITY
