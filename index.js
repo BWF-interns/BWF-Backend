@@ -27,6 +27,7 @@ app.use('/api', require('./auth/route'));
 
 // Warden Routes
 app.use('/api/warden', require('./warden/routes'));
+app.use('/api/teacher', require('./teacher/routes'));
 
 // Student Routes
 app.use("/api/student", require("./student/routes"));
