@@ -16,11 +16,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-<<<<<<< Updated upstream
-    enum: ['admin', 'warden', 'student', 'staff'],
-=======
-    enum: ['admin', 'warden', 'student', 'teacher'],
->>>>>>> Stashed changes
+    enum: ['admin', 'warden', 'student', 'staff', 'teacher'],
     required: true
   },
   refreshToken: {
