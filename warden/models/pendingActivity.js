@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const activitySchema = new mongoose.Schema(
+const pendingActivitySchema = new mongoose.Schema(
   {
     id: {
       type: Number,
@@ -43,7 +43,6 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
 
-
     category: {
       type: String,
       enum: ['Cultural', 'Sports', 'Technical', 'Academic', 'Social', 'Entertainment'],
@@ -83,4 +82,4 @@ const activitySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Activity", activitySchema);
+module.exports = mongoose.model("PendingActivity", pendingActivitySchema);
